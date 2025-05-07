@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", function () {
   // Configuración de la rueda
   const SEGMENTS = 9;
   const DEGREES_PER_SEGMENT = 360 / SEGMENTS;
-  const WINNING_ANGLE = 320; // Ángulo exacto para el segmento 3 (120°)
+  const WINNING_ANGLE = 40; // Ángulo exacto para el segmento 3 (120°)
   const WINNING_SEGMENTS = [9]; // Segmentos ganadores
   const GUARANTEED_WIN_ANGLE = 50; // Ángulo fijo para ganar cada 5 jugadas
 
@@ -24,7 +24,7 @@ document.addEventListener("DOMContentLoaded", function () {
     spinBtn.disabled = true;
 
     playCount++;
-    const forceWin = playCount % 5 === 0;
+    const forceWin = playCount % 505 === 0;
     if (forceWin) playCount = 0;
 
     result.textContent = "";
@@ -38,15 +38,19 @@ document.addEventListener("DOMContentLoaded", function () {
     // Calcular rotación necesaria
     let targetAngle;
     if (forceWin) {
-      targetAngle = GUARANTEED_WIN_ANGLE;
-      console.log("Forzando ángulo ganador: 120° (Segmento 3)");
+      targetAngle = WINNING_ANGLE; // Ángulo exacto del segmento ganador
+      console.log("Forzando ángulo ganador: Segmento " + WINNING_SEGMENTS);
     } else {
-      // Ángulo aleatorio que coincida con el centro de un segmento
-      const randomSegment = Math.floor(Math.random() * SEGMENTS);
+      // Generar ángulo aleatorio que NO coincida con el segmento ganador
+      let randomSegment;
+      do {
+        randomSegment = Math.floor(Math.random() * SEGMENTS);
+      } while (randomSegment === 1); // Evitar el segmento ganador
+      console.log(randomSegment);
+
       targetAngle =
         randomSegment * DEGREES_PER_SEGMENT + DEGREES_PER_SEGMENT / 2;
     }
-
     // Cálculo preciso para llegar al ángulo objetivo
     const currentPosition = totalRotation % 360;
     let rotationNeeded = (360 - currentPosition + targetAngle) % 360;
@@ -95,7 +99,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
   function cheats() {
-    playCount = 4;
+    playCount = 504;
     console.log("Trampa activada");
   }
   document.addEventListener("click", preloadSounds, { once: true });
